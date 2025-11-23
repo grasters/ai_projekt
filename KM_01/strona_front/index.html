@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PlusFIX - Znajdź gdzie obejrzeć</title>
+
+    <!-- Podłączenie zewnętrznego pliku CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- NAGŁÓWEK STRONY -->
+<header>
+    PlusFIX - Znajdź gdzie obejrzeć
+</header>
+
+<!-- PANEL KONTROLNY Z WYSZUKIWANIEM I FILTRAMI -->
+<div class="top-controls">
+    <!-- Pole tekstowe do wyszukiwania filmów/seriali -->
+    <input type="text" id="searchInput" placeholder="Wyszukaj..." />
+
+    <!-- Lista rozwijana do sortowania -->
+    <select id="sortSelect">
+        <option value="">Sortuj według</option>
+        <option value="az">A-Z</option>
+        <option value="za">Z-A</option>
+        <option value="year-asc">Rok: najstarsze</option>
+        <option value="year-desc">Rok: najnowsze</option>
+    </select>
+
+    <!-- Lista rozwijana do filtrowania po platformie -->
+    <select id="platformFilter">
+        <option value="">Wszystkie platformy</option>
+        <option value="Netflix">Netflix</option>
+        <option value="HBO Max">HBO Max</option>
+        <option value="Disney+">Disney+</option>
+        <option value="Prime Video">Prime Video</option>
+        <option value="Apple TV+">Apple TV+</option>
+    </select>
+
+    <!-- Lista rozwijana do filtrowania po czasie trwania -->
+    <select id="durationFilter">
+        <option value="">Dowolny czas</option>
+        <option value="short">Krótkie (do 2h / do 10 odc.)</option>
+        <option value="medium">Średnie (2-3h / 10-20 odc.)</option>
+        <option value="long">Długie (ponad 3h / ponad 20 odc.)</option>
+    </select>
+</div>
+
+<!-- GŁÓWNY KONTENER -->
+<div class="container">
+    <!-- MENU NAWIGACYJNE -->
+    <nav>
+        <ul>
+            <li>Strona główna</li>
+            <li>Filmy</li>
+            <li>Seriale</li>
+            <li>Moja lista</li>
+            <li>Ustawienia</li>
+        </ul>
+    </nav>
+
+    <!-- GŁÓWNA TREŚĆ STRONY -->
+    <article>
+        <!-- Dwie sekcje obok siebie: filmy i seriale -->
+        <div class="content-sections">
+            <!-- SEKCJA FILMÓW -->
+            <div class="content-section">
+                <h2 class="section-title">Dostępne filmy</h2>
+                <!-- Kontener, w którym JavaScript wygeneruje listę filmów -->
+                <div id="moviesContainer" class="movies-list"></div>
+            </div>
+
+            <!-- SEKCJA SERIALI -->
+            <div class="content-section">
+                <h2 class="section-title">Dostępne seriale</h2>
+                <!-- Kontener, w którym JavaScript wygeneruje listę seriali -->
+                <div id="serialsContainer" class="movies-list"></div>
+            </div>
+        </div>
+    </article>
+</div>
+
+<!-- STOPKA STRONY -->
+<footer>
+    &copy; 2024 PlusFIX. Wszystkie prawa zastrzeżone.
+</footer>
+
+<!-- Podłączenie zewnętrznego pliku JavaScript -->
+<script src="script.js"></script>
+
+<!--
+PRZYDATNE LINKI DO NAUKI:
+- HTML: https://developer.mozilla.org/pl/docs/Web/HTML
+- Struktura HTML: https://www.w3schools.com/html/html_intro.asp
+-->
+</body>
+</html>

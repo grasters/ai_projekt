@@ -1,0 +1,247 @@
+/* ========================================
+   RESET I USTAWIENIA GLOBALNE
+   ======================================== */
+
+/* Resetowanie domyślnych marginesów przeglądarki */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;  /* Czcionka dla całej strony */
+    background: #f5f5f5;  /* Jasne tło strony */
+    display: flex;  /* Flexbox - umożliwia elastyczny układ */
+    flex-direction: column;  /* Układa elementy w kolumnie (góra -> dół) */
+    min-height: 100vh;  /* Minimalna wysokość = 100% wysokości okna */
+}
+
+/* ========================================
+   NAGŁÓWEK
+   ======================================== */
+
+header {
+    background: #333;  /* Ciemne tło */
+    color: #fff;  /* Biały tekst */
+    padding: 20px;  /* Odstęp wewnętrzny */
+    text-align: center;  /* Wyśrodkowany tekst */
+    font-size: 24px;
+    font-weight: bold;  /* Pogrubiony tekst */
+}
+
+/* ========================================
+   PANEL KONTROLNY (wyszukiwanie, filtry)
+   ======================================== */
+
+.top-controls {
+    background: #fff;  /* Białe tło */
+    padding: 10px;
+    display: flex;  /* Flexbox - układa elementy obok siebie */
+    gap: 10px;  /* Odstęp między elementami */
+    justify-content: center;  /* Wyśrodkowanie w poziomie */
+    flex-wrap: wrap;  /* Przenosi elementy do nowej linii gdy brakuje miejsca */
+    border-bottom: 1px solid #ccc;  /* Dolna ramka */
+}
+
+/* Stylowanie pól input i select */
+input, select {
+    padding: 8px;  /* Odstęp wewnętrzny */
+    border: 1px solid #ccc;  /* Szara ramka */
+    border-radius: 5px;  /* Zaokrąglone rogi */
+}
+
+/* ========================================
+   GŁÓWNY KONTENER
+   ======================================== */
+
+.container {
+    display: flex;  /* Flexbox - układa nav i article obok siebie */
+    flex: 1;  /* Zajmuje całą dostępną przestrzeń */
+    min-height: 0;  /* Zapobiega problemom z overflow */
+}
+
+/* ========================================
+   MENU NAWIGACYJNE
+   ======================================== */
+
+nav {
+    width: 200px;  /* Stała szerokość menu */
+    background: #222;  /* Bardzo ciemne tło */
+    color: #fff;
+    padding: 20px;
+}
+
+/* Lista w menu */
+nav ul {
+    list-style: none;  /* Usuwa kropki przy elementach listy */
+    padding: 0;
+}
+
+/* Elementy listy w menu */
+nav li {
+    padding: 8px 0;
+    cursor: pointer;  /* Kursor zmienia się na rączkę */
+}
+
+/* Efekt hover - zmiana koloru przy najechaniu myszką */
+nav li:hover {
+    color: #ffcc00;  /* Żółty kolor przy najechaniu */
+}
+
+/* ========================================
+   GŁÓWNA TREŚĆ
+   ======================================== */
+
+article {
+    flex: 1;  /* Zajmuje całą pozostałą przestrzeń */
+    padding: 20px;
+    background: #fff;
+    overflow-y: auto;  /* Pionowy scroll gdy treść się nie mieści */
+}
+
+/* Kontener dla dwóch sekcji (filmy i seriale) */
+.content-sections {
+    display: flex;  /* Układa sekcje obok siebie */
+    gap: 30px;  /* Odstęp między sekcjami */
+}
+
+/* Pojedyncza sekcja (filmy lub seriale) */
+.content-section {
+    flex: 1;  /* Każda sekcja zajmuje 50% szerokości */
+}
+
+/* Tytuł sekcji */
+.section-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 3px solid #ffcc00;  /* Żółta dolna ramka */
+    padding-bottom: 10px;
+}
+
+/* ========================================
+   LISTA FILMÓW/SERIALI
+   ======================================== */
+
+/* Kontener listy */
+.movies-list {
+    display: flex;
+    flex-direction: column;  /* Elementy jeden pod drugim */
+    gap: 15px;  /* Odstęp między kartami */
+}
+
+/* Karta pojedynczego filmu/serialu */
+.movie-card {
+    background: #f9f9f9;  /* Jasnoszare tło */
+    border: 1px solid #ddd;  /* Szara ramka */
+    border-radius: 8px;  /* Zaokrąglone rogi */
+    padding: 20px;
+    display: flex;  /* Flexbox - układa informacje obok siebie */
+    align-items: center;  /* Pionowe wyśrodkowanie */
+    gap: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;  /* Płynne animacje */
+    cursor: pointer;
+}
+
+/* Efekt hover dla karty - przesunięcie i cień */
+.movie-card:hover {
+    transform: translateX(5px);  /* Przesunięcie w prawo o 5px */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);  /* Cień */
+    background: #fff;  /* Białe tło przy najechaniu */
+}
+
+/* Tytuł filmu/serialu */
+.movie-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    flex: 2;  /* Zajmuje 2x więcej miejsca niż inne elementy */
+}
+
+/* Informacje dodatkowe (platforma, czas, rok) */
+.movie-info {
+    color: #666;  /* Ciemnoszary kolor */
+    font-size: 14px;
+    flex: 1;
+    text-align: center;
+}
+
+.movie-year {
+    color: #666;
+    font-size: 14px;
+    flex: 1;
+    text-align: center;
+}
+
+/* ========================================
+   ZNACZKI PLATFORM STREAMINGOWYCH
+   ======================================== */
+
+/* Podstawowy styl znaczka */
+.platform-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #e74c3c;  /* Domyślny czerwony kolor */
+    color: white;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Kolory dla poszczególnych platform */
+.platform-netflix { background: #e50914; }  /* Czerwony Netflix */
+.platform-hbo { background: #7f3f98; }  /* Fioletowy HBO */
+.platform-disney { background: #113ccf; }  /* Niebieski Disney */
+.platform-prime { background: #00a8e1; }  /* Jasnoniebieski Prime */
+.platform-apple { background: #000000; }  /* Czarny Apple */
+
+/* ========================================
+   STOPKA
+   ======================================== */
+
+footer {
+    background: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    margin-top: auto;  /* Przyczepia stopkę do dołu */
+}
+
+/* ========================================
+   RESPONSYWNOŚĆ - DOSTOSOWANIE DO URZĄDZEŃ
+   ======================================== */
+
+/* Dla tabletów (ekrany poniżej 1024px) */
+@media (max-width: 1024px) {
+    .content-sections {
+        flex-direction: column;  /* Sekcje jedna pod drugą zamiast obok */
+    }
+}
+
+/* Dla telefonów (ekrany poniżej 768px) */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;  /* Menu i treść jedna pod drugą */
+    }
+
+    nav {
+        width: 100%;  /* Menu zajmuje całą szerokość */
+    }
+
+    .movie-card {
+        flex-direction: column;  /* Informacje w karcie jedna pod drugą */
+        align-items: flex-start;  /* Wyrównanie do lewej */
+    }
+
+    .movie-info, .movie-year {
+        text-align: left;  /* Tekst wyrównany do lewej */
+    }
+}
+
+/*
+========================================
+PRZYDATNE LINKI DO NAUKI CSS:
+========================================
+- CSS Basics: https://developer.mozilla.org/pl/docs/Web/CSS
+- Flexbox Guide: https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+- CSS Selectors: https://www.w3schools.com/css/css_selectors.asp
+- Media Queries: https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries
+- Transitions: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions
+*/
