@@ -1,107 +1,117 @@
 /* ========================================
-   DANE FILMÓW I SERIALI
+   GLOBALNE DANE
    ======================================== */
 
-/**
- * Tablica z danymi filmów
- * Każdy obiekt zawiera:
- * - id: unikalny identyfikator
- * - title: tytuł filmu
- * - year: rok produkcji
- * - type: typ ('movie' dla filmów)
- * - platform: platforma streamingowa
- * - duration: czas trwania w minutach
- * - info3: dodatkowa informacja (placeholder)
- *
- * W przyszłości te dane będą pobierane z bazy danych przez API
- */
-let moviesData = [
-    { id: 1, title: "Zielona Mila", year: 1999, type: "movie", platform: "Netflix", duration: 189, info3: "Info 3" },
-    { id: 2, title: "Avengers: Koniec gry", year: 2019, type: "movie", platform: "Disney+", duration: 181, info3: "Info 3" },
-    { id: 3, title: "Matrix", year: 1999, type: "movie", platform: "HBO Max", duration: 136, info3: "Info 3" },
-    { id: 4, title: "Król Lew", year: 1994, type: "movie", platform: "Disney+", duration: 88, info3: "Info 3" },
-    { id: 5, title: "Incepcja", year: 2010, type: "movie", platform: "Netflix", duration: 148, info3: "Info 3" },
-    { id: 6, title: "Pulp Fiction", year: 1994, type: "movie", platform: "Prime Video", duration: 154, info3: "Info 3" },
-    { id: 7, title: "Forrest Gump", year: 1994, type: "movie", platform: "Prime Video", duration: 142, info3: "Info 3" },
-    { id: 8, title: "Batman: Mroczny Rycerz", year: 2008, type: "movie", platform: "HBO Max", duration: 152, info3: "Info 3" },
-    { id: 9, title: "Titanic", year: 1997, type: "movie", platform: "Prime Video", duration: 195, info3: "Info 3" },
-    { id: 10, title: "Jurassic Park", year: 1993, type: "movie", platform: "Netflix", duration: 127, info3: "Info 3" }
-];
+let moviesData = [];
+let serialsData = [];
+let favorites = [];
+let searchHistory = [];
 
-/**
- * Tablica z danymi seriali
- * Każdy obiekt zawiera:
- * - id: unikalny identyfikator
- * - title: tytuł serialu
- * - year: rok premiery
- * - type: typ ('series' dla seriali)
- * - platform: platforma streamingowa
- * - episodes: liczba odcinków
- * - avgTime: średni czas trwania odcinka w minutach
- * - info3: dodatkowa informacja (placeholder)
- */
-let serialsData = [
-    { id: 11, title: "Stranger Things", year: 2016, type: "series", platform: "Netflix", episodes: 42, avgTime: 50, info3: "Info 3" },
-    { id: 12, title: "Gra o Tron", year: 2011, type: "series", platform: "HBO Max", episodes: 73, avgTime: 57, info3: "Info 3" },
-    { id: 13, title: "The Mandalorian", year: 2019, type: "series", platform: "Disney+", episodes: 24, avgTime: 40, info3: "Info 3" },
-    { id: 14, title: "Breaking Bad", year: 2008, type: "series", platform: "Netflix", episodes: 62, avgTime: 47, info3: "Info 3" },
-    { id: 15, title: "The Boys", year: 2019, type: "series", platform: "Prime Video", episodes: 32, avgTime: 60, info3: "Info 3" },
-    { id: 16, title: "Ted Lasso", year: 2020, type: "series", platform: "Apple TV+", episodes: 34, avgTime: 30, info3: "Info 3" },
-    { id: 17, title: "Wiedźmin", year: 2019, type: "series", platform: "Netflix", episodes: 24, avgTime: 60, info3: "Info 3" },
-    { id: 18, title: "Wednesday", year: 2022, type: "series", platform: "Netflix", episodes: 8, avgTime: 50, info3: "Info 3" },
-    { id: 19, title: "House of the Dragon", year: 2022, type: "series", platform: "HBO Max", episodes: 10, avgTime: 65, info3: "Info 3" },
-    { id: 20, title: "Loki", year: 2021, type: "series", platform: "Disney+", episodes: 12, avgTime: 50, info3: "Info 3" }
-];
+const FAVORITES_COOKIE = 'plusfix_favorites';
+const HISTORY_COOKIE = 'plusfix_history';
+const COOKIE_DAYS = 30;
 
-/* ========================================
-   FUNKCJE POMOCNICZE
-   ======================================== */
+function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
 
-/**
- * Formatuje czas trwania do czytelnego formatu
- * @param {Object} item - Obiekt filmu lub serialu
- * @returns {string} - Sformatowany czas (np. "2h 45min" lub "42 odc. (~50min/odc.)")
- */
-function formatDuration(item) {
-    if (item.type === 'movie') {
-        // Dla filmów: oblicz godziny i minuty z całkowitej liczby minut
-        const hours = Math.floor(item.duration / 60);  // Math.floor zaokrągla w dół
-        const minutes = item.duration % 60;  // % (modulo) zwraca resztę z dzielenia
-        return `${hours}h ${minutes}min`;
-    } else {
-        // Dla seriali: pokaż liczbę odcinków i średni czas
-        return `${item.episodes} odc. (~${item.avgTime}min/odc.)`;
+function getCookie(name) {
+    const match = document.cookie.split('; ').find(row => row.startsWith(name + '='));
+    return match ? decodeURIComponent(match.split('=')[1]) : null;
+}
+
+function loadFavorites() {
+    try {
+        const raw = getCookie(FAVORITES_COOKIE);
+        favorites = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        favorites = [];
     }
 }
 
-/**
- * Wyświetla filmy/seriale w kontenerze
- * @param {Array} items - Tablica filmów/seriali do wyświetlenia
- * @param {string} containerId - ID kontenera HTML gdzie mają być wyświetlone
- */
-function displayItems(items, containerId) {
-    // Pobierz element HTML po jego ID
-    const container = document.getElementById(containerId);
+function saveFavorites() {
+    setCookie(FAVORITES_COOKIE, JSON.stringify(favorites), COOKIE_DAYS);
+}
 
-    // Wyczyść zawartość kontenera (usuń poprzednie elementy)
+function loadSearchHistory() {
+    try {
+        const raw = getCookie(HISTORY_COOKIE);
+        searchHistory = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        searchHistory = [];
+    }
+}
+
+function saveSearchHistory() {
+    setCookie(HISTORY_COOKIE, JSON.stringify(searchHistory.slice(0, 5)), COOKIE_DAYS);
+}
+
+//   ŁADOWANIE Z API
+async function loadMoviesFromDatabase() {
+    try {
+        const response = await fetch('http://localhost:8000/backend/API/movies.php');
+        const data = await response.json();
+
+        moviesData = data.map(m => ({
+            ...m,
+            type: "movie",
+            genre: m.genre || 'Inne'
+        }));
+
+        refreshViews();
+    } catch (e) {
+        console.error('Błąd ładowania filmów:', e);
+    }
+}
+
+async function loadSerialsFromDatabase() {
+    try {
+        const response = await fetch('http://localhost:8000/backend/API/serials.php');
+        const data = await response.json();
+
+        serialsData = data.map(s => ({
+            ...s,
+            type: "series",
+            genre: s.genre || 'Inne'
+        }));
+
+        refreshViews();
+    } catch (e) {
+        console.error('Błąd ładowania seriali:', e);
+    }
+}
+
+  // FUNKCJE POMOCNICZE
+
+function formatDuration(item) {
+    if (item.type === 'movie') {
+        const hours = Math.floor(item.duration / 60);
+        const minutes = item.duration % 60;
+        return `${hours}h ${minutes}min`;
+    }
+    return `${item.episodes} odc. (~${item.avgTime}min/odc.)`;
+}
+
+function displayItems(items, containerId) {
+    const container = document.getElementById(containerId);
     container.innerHTML = '';
 
-    // Jeśli brak wyników, pokaż komunikat
-    if (items.length === 0) {
-        container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Brak wyników</p>';
+    if (!items.length) {
+        container.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">Brak wyników</p>';
         return;
     }
 
-    // Iteruj przez każdy element w tablicy
     items.forEach(item => {
-        // Utwórz nowy element div dla karty
         const card = document.createElement('div');
-        card.className = 'movie-card';  // Przypisz klasę CSS
+        card.className = 'movie-card';
 
-        // Utwórz klasę CSS dla platformy (usuń spacje i znaki specjalne)
-        const platformClass = 'platform-' + item.platform.toLowerCase().replace(/[^a-z]/g, '');
+        const favoriteKey = `${item.type}-${item.id}`;
+        const isFavorite = favorites.some(f => f.key === favoriteKey);
 
-        // Wstaw HTML do karty (template string używa `backticks`)
+        const platformClass =
+            'platform-' + item.platform.toLowerCase().replace(/[^a-z]/g, '');
+
         card.innerHTML = `
             <div class="movie-title">${item.title}</div>
             <div class="movie-year">${item.year}</div>
@@ -109,218 +119,303 @@ function displayItems(items, containerId) {
                 <span class="${platformClass} platform-badge">${item.platform}</span>
             </div>
             <div class="movie-info">${formatDuration(item)}</div>
-            <div class="movie-info">${item.info3}</div>
+            <div class="movie-info">${item.genre ?? ''}</div>
+            <div class="movie-info">${item.info3 ?? ''}</div>
+            <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-key="${favoriteKey}">
+                ${isFavorite ? '★ Ulubione' : '☆ Dodaj'}
+            </button>
         `;
 
-        // Dodaj kartę do kontenera
         container.appendChild(card);
+
+        card.addEventListener('click', () => showDetail(item));
+    });
+
+    container.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleFavorite(btn.dataset.key);
+        });
     });
 }
 
-/* ========================================
-   FUNKCJE SORTOWANIA I FILTROWANIA
-   ======================================== */
-
-/**
- * Sortuje tablicę filmów/seriali według wybranego kryterium
- * @param {Array} items - Tablica do posortowania
- * @param {string} sortType - Typ sortowania ('az', 'za', 'year-asc', 'year-desc')
- * @returns {Array} - Posortowana tablica (nowa kopia, oryginał nie jest modyfikowany)
- */
 function sortItems(items, sortType) {
-    // Utwórz kopię tablicy używając spread operator (...)
-    // To ważne, żeby nie modyfikować oryginalnej tablicy
     const sorted = [...items];
 
-    if (sortType === 'az') {
-        // Sortowanie alfabetyczne A-Z
-        // localeCompare porównuje stringi z uwzględnieniem polskich znaków
-        sorted.sort((a, b) => a.title.localeCompare(b.title, 'pl'));
-    } else if (sortType === 'za') {
-        // Sortowanie alfabetyczne Z-A (odwrotnie)
-        sorted.sort((a, b) => b.title.localeCompare(a.title, 'pl'));
-    } else if (sortType === 'year-asc') {
-        // Sortowanie po roku rosnąco (najstarsze -> najnowsze)
-        sorted.sort((a, b) => a.year - b.year);
-    } else if (sortType === 'year-desc') {
-        // Sortowanie po roku malejąco (najnowsze -> najstarsze)
-        sorted.sort((a, b) => b.year - a.year);
+    switch (sortType) {
+        case 'az':
+            sorted.sort((a, b) => a.title.localeCompare(b.title, 'pl'));
+            break;
+        case 'za':
+            sorted.sort((a, b) => b.title.localeCompare(a.title, 'pl'));
+            break;
+        case 'year-asc':
+            sorted.sort((a, b) => a.year - b.year);
+            break;
+        case 'year-desc':
+            sorted.sort((a, b) => b.year - a.year);
+            break;
     }
 
     return sorted;
 }
 
-/**
- * Wyszukuje filmy/seriale po tytule
- * @param {Array} items - Tablica do przeszukania
- * @param {string} searchTerm - Szukana fraza
- * @returns {Array} - Przefiltrowana tablica
- */
-function searchItems(items, searchTerm) {
-    // Jeśli pole jest puste, zwróć wszystkie elementy
-    if (!searchTerm) return items;
-
-    // Zamień frazę na małe litery dla porównania case-insensitive
-    const term = searchTerm.toLowerCase();
-
-    // filter() tworzy nową tablicę z elementami spełniającymi warunek
-    // includes() sprawdza czy string zawiera podany tekst
-    return items.filter(item =>
-        item.title.toLowerCase().includes(term)
-    );
+function searchItems(items, term) {
+    if (!term) return items;
+    term = term.toLowerCase();
+    return items.filter(i => i.title.toLowerCase().includes(term));
 }
 
-/**
- * Filtruje po platformie streamingowej
- * @param {Array} items - Tablica do filtrowania
- * @param {string} platform - Nazwa platformy
- * @returns {Array} - Przefiltrowana tablica
- */
 function filterByPlatform(items, platform) {
-    if (!platform) return items;  // Jeśli nie wybrano platformy, zwróć wszystko
-
-    // Zwróć tylko elementy z wybranej platformy
-    return items.filter(item => item.platform === platform);
+    if (!platform) return items;
+    return items.filter(i => i.platform === platform);
 }
 
-/**
- * Filtruje po czasie trwania
- * @param {Array} items - Tablica do filtrowania
- * @param {string} durationType - Typ czasu ('short', 'medium', 'long')
- * @returns {Array} - Przefiltrowana tablica
- */
 function filterByDuration(items, durationType) {
     if (!durationType) return items;
 
     return items.filter(item => {
         if (item.type === 'movie') {
-            // Filtrowanie dla filmów (duration w minutach)
-            if (durationType === 'short') return item.duration <= 120;  // do 2h
-            if (durationType === 'medium') return item.duration > 120 && item.duration <= 180;  // 2-3h
-            if (durationType === 'long') return item.duration > 180;  // ponad 3h
+            if (durationType === 'short') return item.duration <= 120;
+            if (durationType === 'medium') return item.duration <= 180;
+            if (durationType === 'long') return item.duration > 180;
         } else {
-            // Filtrowanie dla seriali (episodes = liczba odcinków)
             if (durationType === 'short') return item.episodes <= 10;
-            if (durationType === 'medium') return item.episodes > 10 && item.episodes <= 20;
+            if (durationType === 'medium') return item.episodes <= 20;
             if (durationType === 'long') return item.episodes > 20;
         }
-        return true;
     });
 }
 
-/* ========================================
-   GŁÓWNA FUNKCJA AKTUALIZACJI WYŚWIETLANIA
-   ======================================== */
-
-/**
- * Aktualizuje wyświetlanie filmów i seriali na podstawie wszystkich filtrów
- * Ta funkcja jest wywoływana za każdym razem gdy użytkownik:
- * - wpisuje coś w wyszukiwarkę
- * - zmienia sortowanie
- * - zmienia filtr platformy
- * - zmienia filtr czasu trwania
- */
 function updateDisplay() {
-    // Pobierz wartości z wszystkich pól formularza
     const searchTerm = document.getElementById('searchInput').value;
     const sortType = document.getElementById('sortSelect').value;
     const platform = document.getElementById('platformFilter').value;
     const duration = document.getElementById('durationFilter').value;
 
-    /* --- PRZETWARZANIE FILMÓW --- */
-    // Krok 1: Wyszukaj filmy pasujące do frazy
-    let filteredMovies = searchItems(moviesData, searchTerm);
-    // Krok 2: Przefiltruj po platformie
-    filteredMovies = filterByPlatform(filteredMovies, platform);
-    // Krok 3: Przefiltruj po czasie trwania
-    filteredMovies = filterByDuration(filteredMovies, duration);
-    // Krok 4: Posortuj wyniki
-    filteredMovies = sortItems(filteredMovies, sortType);
+    let movies = searchItems(moviesData, searchTerm);
+    movies = filterByPlatform(movies, platform);
+    movies = filterByDuration(movies, duration);
+    movies = sortItems(movies, sortType);
 
-    /* --- PRZETWARZANIE SERIALI --- */
-    // To samo dla seriali
-    let filteredSerials = searchItems(serialsData, searchTerm);
-    filteredSerials = filterByPlatform(filteredSerials, platform);
-    filteredSerials = filterByDuration(filteredSerials, duration);
-    filteredSerials = sortItems(filteredSerials, sortType);
+    let serials = searchItems(serialsData, searchTerm);
+    serials = filterByPlatform(serials, platform);
+    serials = filterByDuration(serials, duration);
+    serials = sortItems(serials, sortType);
 
-    // Wyświetl przetworzone dane
-    displayItems(filteredMovies, 'moviesContainer');
-    displayItems(filteredSerials, 'serialsContainer');
+    displayItems(movies, 'moviesContainer');
+    displayItems(serials, 'serialsContainer');
+    displayFavorites();
+    renderCategories();
+    renderFavoritesPage();
 }
 
-/* ========================================
-   NASŁUCHIWANIE ZDARZEŃ (EVENT LISTENERS)
-   ======================================== */
-
-/**
- * addEventListener() rejestruje funkcję która ma być wywołana gdy zajdzie zdarzenie
- * 'change' - zdarzenie gdy zmieni się wartość w <select>
- * 'input' - zdarzenie gdy użytkownik wpisuje tekst (działa w czasie rzeczywistym)
- */
-
-// Gdy zmieni się wybór w sortowaniu - zaktualizuj wyświetlanie
-document.getElementById('sortSelect').addEventListener('change', updateDisplay);
-
-// Gdy użytkownik wpisuje w wyszukiwarkę - zaktualizuj wyświetlanie
-document.getElementById('searchInput').addEventListener('input', updateDisplay);
-
-// Gdy zmieni się wybór platformy - zaktualizuj wyświetlanie
-document.getElementById('platformFilter').addEventListener('change', updateDisplay);
-
-// Gdy zmieni się wybór czasu trwania - zaktualizuj wyświetlanie
-document.getElementById('durationFilter').addEventListener('change', updateDisplay);
-
-/* ========================================
-   INICJALIZACJA - PIERWSZE WYŚWIETLENIE
-   ======================================== */
-
-// Wywołaj updateDisplay() przy załadowaniu strony
-// To wyświetli wszystkie filmy i seriale na start
-updateDisplay();
-
-/* ========================================
-   INTEGRACJA Z BAZĄ DANYCH (PRZYKŁAD)
-   ======================================== */
-
-/**
- * PRZYSZŁA FUNKCJA DO POBIERANIA DANYCH Z BAZY
- * Odkomentuj i dostosuj gdy będziesz gotowy do połączenia z API
- */
-/*
-async function loadDataFromDatabase() {
-    try {
-        // Promise.all() pozwala wykonać wiele requestów jednocześnie
-        const [moviesResponse, serialsResponse] = await Promise.all([
-            fetch('/api/movies'),      // Endpoint dla filmów
-            fetch('/api/series')       // Endpoint dla seriali
-        ]);
-
-        // Zamień odpowiedzi na format JSON
-        moviesData = await moviesResponse.json();
-        serialsData = await serialsResponse.json();
-
-        // Wyświetl pobrane dane
-        updateDisplay();
-    } catch (error) {
-        // Obsługa błędów (np. brak połączenia z serwerem)
-        console.error('Błąd ładowania danych:', error);
+function toggleFavorite(key) {
+    const exists = favorites.find(f => f.key === key);
+    if (exists) {
+        favorites = favorites.filter(f => f.key !== key);
+    } else {
+        favorites.push({ key });
     }
+    saveFavorites();
+    displayFavorites();
+    updateDisplay();
 }
 
-// Wywołaj tę funkcję zamiast updateDisplay() przy starcie:
-// loadDataFromDatabase();
-*/
+function displayFavorites() {
+    const container = document.getElementById('favoritesContainer');
+    const allItems = [...moviesData, ...serialsData];
+    const favItems = favorites
+        .map(f => allItems.find(i => `${i.type}-${i.id}` === f.key))
+        .filter(Boolean);
 
-/*
-========================================
-PRZYDATNE LINKI DO NAUKI JAVASCRIPT:
-========================================
-- JavaScript Basics: https://developer.mozilla.org/pl/docs/Web/JavaScript/Guide
-- Array Methods (map, filter, sort): https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
-- Event Listeners: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
-- DOM Manipulation: https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model
-- Fetch API: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
-- Arrow Functions: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
-- Template Literals: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
-*/
+    if (!favItems.length) {
+        container.innerHTML = '<p style="color:#777;">Brak ulubionych</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+    favItems.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'favorites-item';
+        el.innerHTML = `
+            <span>${item.title} (${item.year})</span>
+            <button class="favorite-btn active" data-key="${item.type}-${item.id}">Usuń</button>
+        `;
+        el.querySelector('button').addEventListener('click', () => toggleFavorite(`${item.type}-${item.id}`));
+        container.appendChild(el);
+    });
+}
+
+function addSearchTermToHistory(term) {
+    if (!term.trim()) return;
+    const normalized = term.trim();
+    // Unikamy duplikatów, najnowsze na górze
+    searchHistory = [normalized, ...searchHistory.filter(t => t !== normalized)].slice(0, 5);
+    saveSearchHistory();
+    renderSearchHistory();
+}
+
+function renderSearchHistory() {
+    const list = document.getElementById('searchHistory');
+    list.innerHTML = '';
+    if (!searchHistory.length) {
+        list.innerHTML = '<li style="list-style:none;color:#777;border:none;">Brak historii</li>';
+        return;
+    }
+    searchHistory.forEach(term => {
+        const li = document.createElement('li');
+        li.textContent = term;
+        li.addEventListener('click', () => {
+            document.getElementById('searchInput').value = term;
+            updateDisplay();
+        });
+        list.appendChild(li);
+    });
+}
+
+function renderFavoritesPage() {
+    const container = document.getElementById('favoritesPage');
+    const allItems = [...moviesData, ...serialsData];
+    const favItems = favorites
+        .map(f => allItems.find(i => `${i.type}-${i.id}` === f.key))
+        .filter(Boolean);
+
+    if (!favItems.length) {
+        container.innerHTML = '<p style="color:#777;">Brak ulubionych</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+    favItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'movie-card';
+        card.innerHTML = `
+            <div class="movie-title">${item.title}</div>
+            <div class="movie-year">${item.year}</div>
+            <div class="movie-info">${item.platform}</div>
+            <div class="movie-info">${item.genre ?? ''}</div>
+            <button class="favorite-btn active">Usuń</button>
+        `;
+        card.querySelector('button').addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleFavorite(`${item.type}-${item.id}`);
+        });
+        card.addEventListener('click', () => showDetail(item));
+        container.appendChild(card);
+    });
+}
+
+function renderCategories() {
+    const container = document.getElementById('categoriesContainer');
+    if (!container) return;
+    const allItems = [...moviesData, ...serialsData];
+    const byGenre = allItems.reduce((acc, item) => {
+        const key = item.genre || 'Inne';
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(item);
+        return acc;
+    }, {});
+
+    container.innerHTML = '';
+
+    Object.keys(byGenre).sort().forEach(genre => {
+        const row = document.createElement('div');
+        row.className = 'category-row';
+        row.innerHTML = `<div class="category-title">${genre}</div>`;
+
+        const list = document.createElement('div');
+        list.className = 'category-list';
+
+        byGenre[genre].forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'category-card';
+            card.innerHTML = `
+                <div class="category-title-card">${item.title}</div>
+                <div class="category-info">
+                    <div>${item.year}</div>
+                    <div>${item.platform}</div>
+                    <div>${item.type === 'movie' ? formatDuration(item) : item.episodes + ' odc.'}</div>
+                </div>
+            `;
+            card.addEventListener('click', () => showDetail(item));
+            list.appendChild(card);
+        });
+
+        row.appendChild(list);
+        container.appendChild(row);
+    });
+}
+
+function showDetail(item) {
+    const modal = document.getElementById('detailModal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    document.getElementById('detailType').textContent = item.type === 'movie' ? 'Film' : 'Serial';
+    document.getElementById('detailTitle').textContent = item.title;
+    document.getElementById('detailYear').textContent = `Rok: ${item.year}`;
+    document.getElementById('detailPlatform').textContent = `Platforma: ${item.platform}`;
+    document.getElementById('detailDuration').textContent = item.type === 'movie'
+        ? `Czas trwania: ${formatDuration(item)}`
+        : `Odcinki: ${item.episodes} × ${item.avgTime} min`;
+    document.getElementById('detailGenre').textContent = `Gatunek: ${item.genre ?? 'Brak danych'}`;
+    document.getElementById('detailInfo').textContent = item.info3 ?? '';
+}
+
+function hideDetail() {
+    const modal = document.getElementById('detailModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+function refreshViews() {
+    updateDisplay();
+}
+
+function setupNav() {
+    const links = document.querySelectorAll('.nav-link');
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            links.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+            const target = link.dataset.target;
+            document.querySelectorAll('.page-section').forEach(sec => {
+                sec.classList.add('hidden');
+            });
+            const sec = document.getElementById(target);
+            if (sec) sec.classList.remove('hidden');
+        });
+    });
+}
+
+   //START
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadFavorites();
+    loadSearchHistory();
+    renderSearchHistory();
+
+    loadMoviesFromDatabase();
+    loadSerialsFromDatabase();
+
+    document.getElementById('sortSelect').addEventListener('change', updateDisplay);
+    document.getElementById('searchInput').addEventListener('input', updateDisplay);
+    document.getElementById('searchInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const term = document.getElementById('searchInput').value;
+            addSearchTermToHistory(term);
+            updateDisplay();
+        }
+    });
+    document.getElementById('platformFilter').addEventListener('change', updateDisplay);
+    document.getElementById('durationFilter').addEventListener('change', updateDisplay);
+
+    setupNav();
+
+    const closeBtn = document.getElementById('closeModal');
+    if (closeBtn) closeBtn.addEventListener('click', hideDetail);
+    const modal = document.getElementById('detailModal');
+    if (modal) modal.addEventListener('click', (e) => {
+        if (e.target === modal) hideDetail();
+    });
+});

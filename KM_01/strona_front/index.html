@@ -52,33 +52,86 @@
     <!-- MENU NAWIGACYJNE -->
     <nav>
         <ul>
-            <li>Strona główna</li>
-            <li>Filmy</li>
-            <li>Seriale</li>
-            <li>Moja lista</li>
-            <li>Ustawienia</li>
+            <li class="nav-link active" data-target="homeSection">Strona główna</li>
+            <li class="nav-link" data-target="categoriesSection">Kategorie</li>
+            <li class="nav-link" data-target="favoritesSection">Ulubione</li>
+            <li class="nav-link" data-target="settingsSection">Ustawienia</li>
         </ul>
     </nav>
 
     <!-- GŁÓWNA TREŚĆ STRONY -->
     <article>
-        <!-- Dwie sekcje obok siebie: filmy i seriale -->
-        <div class="content-sections">
-            <!-- SEKCJA FILMÓW -->
-            <div class="content-section">
-                <h2 class="section-title">Dostępne filmy</h2>
-                <!-- Kontener, w którym JavaScript wygeneruje listę filmów -->
-                <div id="moviesContainer" class="movies-list"></div>
-            </div>
+            <!-- HOME -->
+            <section id="homeSection" class="page-section">
+                <!-- Dwie sekcje obok siebie: filmy i seriale -->
+                <div class="content-sections">
+                    <!-- SEKCJA FILMÓW -->
+                    <div class="content-section">
+                        <h2 class="section-title">Dostępne filmy</h2>
+                        <!-- Kontener, w którym JavaScript wygeneruje listę filmów -->
+                        <div id="moviesContainer" class="movies-list"></div>
+                    </div>
 
-            <!-- SEKCJA SERIALI -->
-            <div class="content-section">
-                <h2 class="section-title">Dostępne seriale</h2>
-                <!-- Kontener, w którym JavaScript wygeneruje listę seriali -->
-                <div id="serialsContainer" class="movies-list"></div>
+                    <!-- SEKCJA SERIALI -->
+                    <div class="content-section">
+                        <h2 class="section-title">Dostępne seriale</h2>
+                        <!-- Kontener, w którym JavaScript wygeneruje listę seriali -->
+                        <div id="serialsContainer" class="movies-list"></div>
+                    </div>
+
+                    <!-- SEKCJA ULUBIONYCH I HISTORII -->
+                    <div class="content-section side-panel">
+                        <h2 class="section-title">Test</h2>
+                        <div id="favoritesContainer" class="favorites-list"></div>
+
+                        <h3 class="section-subtitle">Ostatnie wyszukania</h3>
+                        <ul id="searchHistory" class="search-history"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- KATEGORIE -->
+            <section id="categoriesSection" class="page-section hidden">
+                <h2 class="section-title">Kategorie</h2>
+                <div id="categoriesContainer" class="categories-container"></div>
+            </section>
+
+            <!-- ULUBIONE STRONA -->
+            <section id="favoritesSection" class="page-section hidden">
+                <h2 class="section-title">Test</h2>
+                <div id="favoritesPage" class="favorites-page"></div>
+            </section>
+
+            <!-- USTAWIENIA STRONA -->
+            <section id="settingsSection" class="page-section hidden">
+                <h2 class="section-title">Ustawienia</h2>
+                <p>Tryb demonstracyjny: dane lokalne, bez logowania.</p>
+            </section>
+    </article>
+</div>
+
+<!-- MODAL SZCZEGÓŁÓW -->
+<div id="detailModal" class="modal hidden">
+    <div class="modal-content">
+        <button id="closeModal" class="modal-close">×</button>
+        <div class="modal-body">
+            <div class="modal-left">
+                <div id="detailImage" class="modal-poster">OBRAZ</div>
+            </div>
+            <div class="modal-right">
+                <div id="detailType" class="badge"></div>
+                <h2 id="detailTitle"></h2>
+                <div class="modal-meta">
+                    <span id="detailYear"></span>
+                    <span id="detailPlatform"></span>
+                    <span id="detailDuration"></span>
+                    <span id="detailGenre"></span>
+                </div>
+                <p id="detailInfo"></p>
+                <p class="muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus porta arcu vitae sapien efficitur, eu cursus justo cursus.</p>
             </div>
         </div>
-    </article>
+    </div>
 </div>
 
 <!-- STOPKA STRONY -->

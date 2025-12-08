@@ -101,6 +101,10 @@ article {
     gap: 30px;  /* Odstęp między sekcjami */
 }
 
+.page-section.hidden {
+    display: none;
+}
+
 /* Pojedyncza sekcja (filmy lub seriale) */
 .content-section {
     flex: 1;  /* Każda sekcja zajmuje 50% szerokości */
@@ -127,6 +131,64 @@ article {
     gap: 15px;  /* Odstęp między kartami */
 }
 
+.favorites-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.side-panel {
+    max-width: 320px;
+    min-width: 260px;
+}
+
+.favorites-page {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.favorites-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.section-subtitle {
+    margin-top: 24px;
+    margin-bottom: 8px;
+    font-size: 16px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 6px;
+}
+
+.search-history {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.search-history li {
+    background: #fafafa;
+    border: 1px solid #e4e4e4;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.search-history li:hover {
+    background: #f0f0f0;
+}
+
 /* Karta pojedynczego filmu/serialu */
 .movie-card {
     background: #f9f9f9;  /* Jasnoszare tło */
@@ -140,11 +202,165 @@ article {
     cursor: pointer;
 }
 
+.favorite-btn {
+    background: #ffcc00;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.favorite-btn.active {
+    background: #ff9900;
+    color: #fff;
+}
+
+.favorite-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.categories-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.category-row {
+    background: #e8f0ff;
+    border: 1px solid #d0dcff;
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.category-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #1f3b73;
+}
+
+.category-list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.category-card {
+    background: linear-gradient(135deg, #5a7edc, #2f5faf);
+    color: #fff;
+    border-radius: 10px;
+    min-width: 180px;
+    padding: 14px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.category-card:hover .category-info {
+    opacity: 1;
+}
+
+.category-title-card {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.category-info {
+    opacity: 0.85;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #1e3a8a;
+    color: white;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-right: 6px;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 10px;
+    width: min(900px, 90vw);
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.modal-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.modal-body {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 16px;
+}
+
+.modal-poster {
+    background: #d7e3ff;
+    border-radius: 10px;
+    height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1e3a8a;
+    font-weight: bold;
+}
+
+.modal-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 12px;
+}
+
+.muted {
+    color: #666;
+    font-size: 14px;
+}
+
 /* Efekt hover dla karty - przesunięcie i cień */
 .movie-card:hover {
     transform: translateX(5px);  /* Przesunięcie w prawo o 5px */
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);  /* Cień */
     background: #fff;  /* Białe tło przy najechaniu */
+}
+
+.movie-card:hover .movie-title {
+    color: #1e3a8a;
 }
 
 /* Tytuł filmu/serialu */
